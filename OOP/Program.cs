@@ -154,22 +154,47 @@ namespace OOP
             public abstract void DisplayVehicleInfo();
         }
 
-        abstract class GroundVehicle : Vehicle, IMovableHorizontal, IDisplayVehicleInfo
+        internal abstract class GroundVehicle : Vehicle, IMovableHorizontal, IDisplayVehicleInfo
         {
             internal byte _wheelsCount;
             internal WheelDriveTypes _wheelDriveType;
-            internal ushort horsePower;
+            internal ushort _horsePower;
             internal GroundVehicleEngineTypes _engineType;
             
             public GroundVehicle(string name, float weight, short maxSpeed, short minSpeed,
-                short deltaSpeed, short currSpeed, byte wheelsCount, WheelDriveTypes wheelDriveType, GroundVehicleEngineTypes engineType) : base(name, weight, maxSpeed, minSpeed, deltaSpeed)
+                short deltaSpeed, byte wheelsCount, WheelDriveTypes wheelDriveType, GroundVehicleEngineTypes engineType, ushort horsePower) : base(name, weight, maxSpeed, minSpeed, deltaSpeed)
             {
                 _wheelsCount = wheelsCount;
                 _wheelDriveType = wheelDriveType;
+                _horsePower = horsePower;
                 _engineType = engineType;
             }
 
             public abstract void DisplayVehicleInfo();
+
+            public override void ShutdownEngine()
+            {
+                if (_isEngineRunning)
+                {
+                    Console.WriteLine("Двигатель заглушен!");
+                }
+                else
+                {
+                    Console.WriteLine("Прежде чем заглушить двигатель, его надо запустить!");
+                }
+            }
+
+            public override void StartEngine()
+            {
+                if (!_isEngineRunning)
+                {
+                    Console.WriteLine("Двигатель запущен!");
+                }
+                else
+                {
+                    Console.WriteLine("Прежде чем запустить двигатель, его надо заглушить!");
+                }
+            }
 
             public void EmergencyStop()
             {
@@ -222,6 +247,27 @@ namespace OOP
             }
         }
 
+        public class Car: GroundVehicle
+        {
+            private CarBodyTypes _bodyType;
+
+
+            public Car(string name, float weight, short maxSpeed, short minSpeed,
+                short deltaSpeed, short currSpeed, byte wheelsCount, 
+                WheelDriveTypes wheelDriveType, GroundVehicleEngineTypes engineType, ushort horsePower, CarBodyTypes BodyType) 
+                : base (name, weight, maxSpeed, minSpeed, deltaSpeed, wheelsCount, wheelDriveType, engineType, horsePower)
+            {
+                _bodyType = BodyType;
+            }
+
+            public override void DisplayVehicleInfo()
+            {
+                Console.WriteLine($"Название: {_name} ");
+                Console.WriteLine($"Кузов: {_bodyType}, вес: {_weight} кг");
+                Console.WriteLine($"Привод: {_wheelDriveType}, количество колёс: {_wheelsCount} ");
+                Console.WriteLine($"Тип двигателя: {GroundVehicleEngineTypesDict[_engineType]}, мощность: {_horsePower} л/с");
+            }
+        }
 
         interface IMovableHorizontal
         {
@@ -240,21 +286,21 @@ namespace OOP
             void DisplayVehicleInfo();
         }
 
-        enum WheelDriveTypes
+        internal enum WheelDriveTypes
         {
             FrontWheelDrive,
             RearWhellDrive,
             FourWheelDrive
         }
 
-        Dictionary<WheelDriveTypes, string> WheelDriveTypesDict = new Dictionary<WheelDriveTypes, string>()
+        internal Dictionary<WheelDriveTypes, string> WheelDriveTypesDict = new Dictionary<WheelDriveTypes, string>()
         {
             { WheelDriveTypes.FrontWheelDrive,  "Передний"},
             { WheelDriveTypes.RearWhellDrive,  "Задний"},
             { WheelDriveTypes.FourWheelDrive,  "Полный"}
         };
 
-        enum VehicleActionTypes
+        internal enum VehicleActionTypes
         {
             StartEngine,
             SpeedUp,
@@ -267,7 +313,7 @@ namespace OOP
             ReturnToGarage
         }
 
-        Dictionary<VehicleActionTypes, string> VehicleActionTypesDict = new Dictionary<VehicleActionTypes, string>()
+        static internal Dictionary<VehicleActionTypes, string> VehicleActionTypesDict = new Dictionary<VehicleActionTypes, string>()
         {
             { VehicleActionTypes.StartEngine,  "Запустить двигатель"},
             { VehicleActionTypes.SpeedUp,  "Увеличить скорость"},
@@ -280,18 +326,33 @@ namespace OOP
             { VehicleActionTypes.ReturnToGarage,  "Вернуться в гараж"}
         };
 
-        enum GroundVehicleEngineTypes
+        internal enum GroundVehicleEngineTypes
         {
             Gasoline,
             Diesel,
             Electric
         };
 
-        Dictionary<GroundVehicleEngineTypes, string> GroundVehicleEngineTypesDict = new Dictionary<GroundVehicleEngineTypes, string>()
+        static internal Dictionary<GroundVehicleEngineTypes, string> GroundVehicleEngineTypesDict = new Dictionary<GroundVehicleEngineTypes, string>()
         {
             { GroundVehicleEngineTypes.Gasoline,  "Бензиновый"},
             { GroundVehicleEngineTypes.Diesel,  "Дизельный"},
             { GroundVehicleEngineTypes.Electric,  "Электрический"}
+        };
+
+        internal enum CarBodyTypes
+        {
+            Sedan,
+            SUV,
+            Supercar
+        };
+
+
+        static internal Dictionary<CarBodyTypes, string> CarBodyTypesDict = new Dictionary<CarBodyTypes, string>()
+        {
+            { CarBodyTypes.Sedan,  "Седан"},
+            { CarBodyTypes.SUV,  "Внедорожник/Кроссовер"},
+            { CarBodyTypes.Supercar,  "Суперкар"}
         };
 
 
