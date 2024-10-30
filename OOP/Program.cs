@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
@@ -12,29 +13,49 @@ namespace OOP
     {
         static void Main(string[] args)
         {
+            Car car = new Car(name: "Жигули", weight: 1500, maxSpeed: 100, acceleration: 5, wheelDriveType: WheelDriveTypes.RearWhellDrive,
+                engineType: GroundVehicleEngineTypes.Gasoline, horsePower: 70, bodyType: CarBodyTypes.Sedan);
+
+            Motorcycle moto = new Motorcycle(name: "Harley-Davidson", weight: 1500, maxSpeed: 290, acceleration: 30,
+                engineType: GroundVehicleEngineTypes.Gasoline, horsePower: 70);
+
+            Helicopter heli = new Helicopter(name: "Ми-24", weight: 5000, maxSpeed: 400, acceleration: 40, maxAltitude: 4000,
+                verticalAcceleration: 60, loadCapacity: 10000, AirVehicleEngineTypes.Turboshaft);
+
+
+            Plane plane = new Plane(name: "Sea Wixen", weight: 3000, maxSpeed: 1151, acceleration: 100, maxAltitude: 9000,
+                verticalAcceleration: 180, loadCapacity: 3000, AirVehicleEngineTypes.Reactive, runwayLength: 300);
+
+            Plane plane2 = new Plane(name: "F4U Corsair", weight: 2000, maxSpeed: 485, acceleration: 40, maxAltitude: 3500,
+                verticalAcceleration: 20, loadCapacity: 1500, AirVehicleEngineTypes.Radial, runwayLength: 350);
+
+            Console.ReadLine();
         }
+
+
+
+
 
         public abstract class Vehicle
         {
-            internal string _name;
+            protected string _name;
 
-            internal float _weight;
+            protected float _weight;
 
-            internal int _maxSpeed;
-            internal int _minSpeed;
-            internal short _deltaSpeed;
-            internal double _currSpeed;
+            protected int _maxSpeed;
+            protected const int _MINSPEED = 0;
+            protected short _acceleration;
+            protected double _currSpeed;
 
-            internal bool _isEngineRunning;
+            protected bool _isEngineRunning;
 
-            public Vehicle(string name, float weight, int maxSpeed, int minSpeed, short deltaSpeed)
+            public Vehicle(string name, float weight, int maxSpeed, short acceleration)
             {
                 _name = name;
                 _weight = weight;
                 _maxSpeed = maxSpeed;
-                _minSpeed = minSpeed;
-                _deltaSpeed = deltaSpeed;
-                _currSpeed = 0;
+                _acceleration = acceleration;
+                _currSpeed = _MINSPEED;
                 _isEngineRunning = false;
             }
 
@@ -45,7 +66,7 @@ namespace OOP
 
             public int VehicleMinSpeed
             {
-                get { return _minSpeed; }
+                get { return _MINSPEED; }
             }
 
             public string VehicleName
@@ -66,28 +87,70 @@ namespace OOP
 
         }
 
-        abstract class AirVehicle : Vehicle, IMovableHorizontal, IMovableVertical
+        public abstract class AirVehicle : Vehicle, IMovableHorizontal, IMovableVertical
         {
-            internal int _minAltitude;
-            internal int _maxAltitude;
-            internal short _deltaAltitude;
-            internal int _currAltitude;
+            protected int _minAltitude;
+            protected int _maxAltitude;
+            protected short _deltaAltitude;
+            protected int _currAltitude;
+            protected int _loadCapacity;
+            protected AirVehicleEngineTypes _engineType;
 
-            public AirVehicle(string name, float weight, short maxSpeed, short minSpeed, 
-                short deltaSpeed, short currSpeed, string vehicleName, short minAltitude,
-                short maxAltitude, short deltaAltitude) : base (name, weight, maxSpeed, minSpeed, deltaSpeed)
+                public AirVehicle(string name, float weight, short maxSpeed,
+                short acceleration, int maxAltitude, short verticalAcceleration, int loadCapacity, AirVehicleEngineTypes engineType) :
+                base(name, weight, maxSpeed, acceleration)
             {
-                _minAltitude = minAltitude;
+                _minAltitude = 0;
                 _maxAltitude = maxAltitude;
-                _deltaAltitude = deltaAltitude;
+                _deltaAltitude = verticalAcceleration;
                 _currAltitude = 0;
+                _loadCapacity = loadCapacity;
+                _engineType = engineType;
+            }
+
+            public override void ShutdownEngine()
+            {
+                if (_isEngineRunning)
+                {
+                    if (_currAltitude == 0)
+                    {
+                        _isEngineRunning = false;
+                        Console.WriteLine("Двигатель заглушен!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Сначала необходимо совершить посадку!");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Прежде чем заглушить двигатель, его надо запустить!");
+                }
+            }
+
+            public override void StartEngine()
+            {
+                if (!_isEngineRunning)
+                {
+                    _isEngineRunning = true;
+                    Console.WriteLine("Двигатель запущен!");
+                }
+                else
+                {
+                    Console.WriteLine("Прежде чем запустить двигатель, его надо заглушить!");
+                }
             }
 
             public void SpeedUp()
             {
+                if (!_isEngineRunning)
+                {
+                    this.StartEngine();
+                }
+                System.Threading.Thread.Sleep(500);
                 if (_currSpeed < _maxSpeed)
                 {
-                    _currSpeed += _deltaSpeed;
+                    _currSpeed += _acceleration;
                     Console.WriteLine($" Нажимаем педаль газа! {_name} летит уверенно и умеренно набирает скорость: {_currSpeed} км/ч");
                 }
                 else
@@ -100,24 +163,34 @@ namespace OOP
 
             public void SlowDown()
             {
-                if (_currSpeed > _minSpeed)
+                if (!_isEngineRunning)
                 {
-                    _currSpeed += _deltaSpeed;
+                    this.StartEngine();
+                }
+                System.Threading.Thread.Sleep(500);
+                if (_currSpeed > _MINSPEED)
+                {
+                    _currSpeed += _acceleration;
                     Console.WriteLine($" Немного притормозили! {_name} сбавил скорость до: {_currSpeed}  км/ч");
                 }
                 else
                 {
-                    _currSpeed = _minSpeed;
+                    _currSpeed = _MINSPEED;
                     Console.WriteLine($" {_name} Полностью остановился ");
                 }
             }
 
             public void PedalToTHeMetal()
             {
+                if (!_isEngineRunning)
+                {
+                    this.StartEngine();
+                }
                 while (_currSpeed < _maxSpeed)
                 {
-                    _currSpeed += _deltaSpeed * 2;
+                    _currSpeed += _acceleration * 2;
                     Console.WriteLine($" Педаль в пол! {_name} мчится со скоростью: {_currSpeed} км/ч");
+                    System.Threading.Thread.Sleep(500);
                 }
                 _currSpeed = _maxSpeed;
                 Console.WriteLine($" Быстрее уже некуда! {_name} несётся с максимальной скоростью: {_currSpeed} км/ч");
@@ -125,6 +198,11 @@ namespace OOP
 
             public void IncreaseAltitude()
             {
+                if (!_isEngineRunning)
+                {
+                    this.StartEngine();
+                }
+                System.Threading.Thread.Sleep(500);
                 if (_currAltitude < _maxAltitude)
                 {
                     _currAltitude += _deltaAltitude;
@@ -139,6 +217,11 @@ namespace OOP
 
             public void DecreaseAltitude()
             {
+                if (!_isEngineRunning)
+                {
+                    this.StartEngine();
+                }
+                System.Threading.Thread.Sleep(500);
                 if (_currAltitude > _minAltitude)
                 {
                     _currAltitude += _deltaAltitude;
@@ -154,18 +237,68 @@ namespace OOP
             public abstract void DisplayVehicleInfo();
         }
 
-        internal abstract class GroundVehicle : Vehicle, IMovableHorizontal, IDisplayVehicleInfo
+        public class Helicopter : AirVehicle
         {
-            internal byte _wheelsCount;
-            internal WheelDriveTypes _wheelDriveType;
-            internal ushort _horsePower;
-            internal GroundVehicleEngineTypes _engineType;
-            
-            public GroundVehicle(string name, float weight, short maxSpeed, short minSpeed,
-                short deltaSpeed, byte wheelsCount, WheelDriveTypes wheelDriveType, GroundVehicleEngineTypes engineType, ushort horsePower) : base(name, weight, maxSpeed, minSpeed, deltaSpeed)
+            public Helicopter(string name, float weight, short maxSpeed,
+                short acceleration, int maxAltitude, short verticalAcceleration,
+                int loadCapacity, AirVehicleEngineTypes engineType) : base(name, weight, maxSpeed, acceleration, maxAltitude,
+                    verticalAcceleration, loadCapacity, engineType)
+            {
+                _loadCapacity = loadCapacity;
+            }
+
+            public override void DisplayVehicleInfo()
+            {
+                Console.WriteLine($"Название: {_name}, тип: Вертолёт");
+                Console.WriteLine($"Грузопдъемность: {_loadCapacity}, вес: {_weight} кг");
+                Console.WriteLine($"Максимальная высота: {_maxAltitude}, Тип двигателя: {AirVehicleEngineTypesDict[_engineType]}");
+            }
+        }
+
+        public class Plane : AirVehicle
+        {
+            private short _runwayLength;
+
+            public Plane(string name, float weight, short maxSpeed,
+                short acceleration, int maxAltitude, short verticalAcceleration,
+                int loadCapacity, AirVehicleEngineTypes engineType, short runwayLength) : base(name, weight, maxSpeed, acceleration,
+                    maxAltitude, verticalAcceleration, loadCapacity, engineType)
+            {
+                _loadCapacity = loadCapacity;
+                _runwayLength = runwayLength;
+            }
+
+            public override void DisplayVehicleInfo()
+            {
+                Console.WriteLine($"Название: {_name}, тип: Самолёт");
+                Console.WriteLine($"Грузопдъемность: {_loadCapacity}, вес: {_weight} кг");
+                Console.WriteLine($"Максимальная высота: {_maxAltitude}, Тип двигателя: {AirVehicleEngineTypesDict[_engineType]}, " +
+                    $"Длина взлётной полосы:{_runwayLength}");
+            }
+        }
+
+        public abstract class GroundVehicle : Vehicle, IMovableHorizontal, IDisplayVehicleInfo
+        {
+            protected byte _wheelsCount;
+            protected WheelDriveTypes _wheelDriveType;
+            protected ushort _horsePower;
+            protected GroundVehicleEngineTypes _engineType;
+
+            protected GroundVehicle(string name, float weight, short maxSpeed,
+                short acceleration, byte wheelsCount, WheelDriveTypes wheelDriveType,
+                GroundVehicleEngineTypes engineType, ushort horsePower) : base(name, weight, maxSpeed, acceleration)
             {
                 _wheelsCount = wheelsCount;
                 _wheelDriveType = wheelDriveType;
+                _horsePower = horsePower;
+                _engineType = engineType;
+            }
+
+            protected GroundVehicle(string name, float weight, short maxSpeed,
+                short acceleration, byte wheelsCount,
+                GroundVehicleEngineTypes engineType, ushort horsePower) : base(name, weight, maxSpeed, acceleration)
+            {
+                _wheelsCount = wheelsCount;
                 _horsePower = horsePower;
                 _engineType = engineType;
             }
@@ -176,6 +309,7 @@ namespace OOP
             {
                 if (_isEngineRunning)
                 {
+                    _isEngineRunning = false;
                     Console.WriteLine("Двигатель заглушен!");
                 }
                 else
@@ -188,6 +322,7 @@ namespace OOP
             {
                 if (!_isEngineRunning)
                 {
+                    _isEngineRunning = true;
                     Console.WriteLine("Двигатель запущен!");
                 }
                 else
@@ -198,10 +333,15 @@ namespace OOP
 
             public void EmergencyStop()
             {
+                if (!_isEngineRunning)
+                {
+                    this.StartEngine();
+                }
                 while (_currSpeed > 10)
                 {
                     _currSpeed = _currSpeed / 2;
                     Console.WriteLine($" {_name} совершает экстренное торможение! Текущая скорость: {_currSpeed}");
+                    System.Threading.Thread.Sleep(500);
                 }
                 _currSpeed = 10;
                 Console.WriteLine($" {_name} полностью остановился!");
@@ -209,20 +349,30 @@ namespace OOP
 
             public void PedalToTHeMetal()
             {
+                if (!_isEngineRunning)
+                {
+                    this.StartEngine();
+                }
                 while (_currSpeed < _maxSpeed)
                 {
-                    _currSpeed += _deltaSpeed * 2;
-                    Console.WriteLine($" Педаль в пол! {_name} мчится со скоростью: {_currSpeed} км/ч" );
+                    _currSpeed += _acceleration * 2;
+                    Console.WriteLine($" Педаль в пол! {_name} мчится со скоростью: {_currSpeed} км/ч");
+                    System.Threading.Thread.Sleep(500);
                 }
                 _currSpeed = _maxSpeed;
-                Console.WriteLine($" Быстрее уже некуда! {_name} несётся с максимальной скоростью: {_currSpeed} км/ч" );
+                Console.WriteLine($" Быстрее уже некуда! {_name} несётся с максимальной скоростью: {_currSpeed} км/ч");
+
             }
 
             public void SpeedUp()
             {
-                if(_currSpeed < _maxSpeed)
-                { 
-                    _currSpeed += _deltaSpeed;
+                if (!_isEngineRunning)
+                {
+                    this.StartEngine();
+                }
+                if (_currSpeed < _maxSpeed)
+                {
+                    _currSpeed += _acceleration;
                     Console.WriteLine($" Нажимаем педаль газа! {_name} умеренно набирает скорость: {_currSpeed} км/ч");
                 }
                 else
@@ -234,37 +384,64 @@ namespace OOP
 
             public void SlowDown()
             {
-                if (_currSpeed > _minSpeed)
+                if (!_isEngineRunning)
                 {
-                    _currSpeed += _deltaSpeed;
+                    this.StartEngine();
+                }
+                if (_currSpeed > _MINSPEED)
+                {
+                    _currSpeed += _acceleration;
                     Console.WriteLine($" Немного притормозили! {_name} сбавил скорость до: {_currSpeed}  км/ч");
                 }
                 else
                 {
-                    _currSpeed = _minSpeed;
+                    _currSpeed = _MINSPEED;
                     Console.WriteLine($"{_name} полностью остановился ");
                 }
             }
         }
 
-        public class Car: GroundVehicle
+        public class Car : GroundVehicle
         {
             private CarBodyTypes _bodyType;
+            private const byte _WHEELSCOUNT = 4;
 
 
-            public Car(string name, float weight, short maxSpeed, short minSpeed,
-                short deltaSpeed, short currSpeed, byte wheelsCount, 
-                WheelDriveTypes wheelDriveType, GroundVehicleEngineTypes engineType, ushort horsePower, CarBodyTypes BodyType) 
-                : base (name, weight, maxSpeed, minSpeed, deltaSpeed, wheelsCount, wheelDriveType, engineType, horsePower)
+            public Car(string name, float weight, short maxSpeed,
+                short acceleration, WheelDriveTypes wheelDriveType, GroundVehicleEngineTypes engineType,
+                ushort horsePower, CarBodyTypes bodyType) : base(name, weight, maxSpeed, acceleration,
+                    _WHEELSCOUNT, wheelDriveType, engineType, horsePower)
             {
-                _bodyType = BodyType;
+                _bodyType = bodyType;
             }
 
             public override void DisplayVehicleInfo()
             {
-                Console.WriteLine($"Название: {_name} ");
+                Console.WriteLine($"Название: {_name}, тип: Автомобиль");
                 Console.WriteLine($"Кузов: {_bodyType}, вес: {_weight} кг");
-                Console.WriteLine($"Привод: {_wheelDriveType}, количество колёс: {_wheelsCount} ");
+                Console.WriteLine($"Привод: {WheelDriveTypesDict[_wheelDriveType]}, количество колёс: {_WHEELSCOUNT} ");
+                Console.WriteLine($"Тип двигателя: {GroundVehicleEngineTypesDict[_engineType]}, мощность: {_horsePower} л/с");
+            }
+        }
+
+        public class Motorcycle : GroundVehicle
+        {
+            private const byte _WHEELSCOUNT = 2;
+
+
+            public Motorcycle(string name, float weight, short maxSpeed,
+                short acceleration, GroundVehicleEngineTypes engineType,
+                ushort horsePower) : base(name, weight, maxSpeed, acceleration,
+                    _WHEELSCOUNT, engineType, horsePower)
+            {
+
+            }
+
+            public override void DisplayVehicleInfo()
+            {
+                Console.WriteLine($"Название: {_name}, тип: Мотоцикл");
+                Console.WriteLine($"Вес: {_weight} кг");
+                Console.WriteLine($"Привод: {WheelDriveTypesDict[_wheelDriveType]}, количество колёс: {_WHEELSCOUNT} ");
                 Console.WriteLine($"Тип двигателя: {GroundVehicleEngineTypesDict[_engineType]}, мощность: {_horsePower} л/с");
             }
         }
@@ -293,14 +470,15 @@ namespace OOP
             FourWheelDrive
         }
 
-        internal Dictionary<WheelDriveTypes, string> WheelDriveTypesDict = new Dictionary<WheelDriveTypes, string>()
+
+        static Dictionary<WheelDriveTypes, string> WheelDriveTypesDict = new Dictionary<WheelDriveTypes, string>()
         {
             { WheelDriveTypes.FrontWheelDrive,  "Передний"},
             { WheelDriveTypes.RearWhellDrive,  "Задний"},
             { WheelDriveTypes.FourWheelDrive,  "Полный"}
         };
 
-        internal enum VehicleActionTypes
+        public enum VehicleActionTypes
         {
             StartEngine,
             SpeedUp,
@@ -313,7 +491,7 @@ namespace OOP
             ReturnToGarage
         }
 
-        static internal Dictionary<VehicleActionTypes, string> VehicleActionTypesDict = new Dictionary<VehicleActionTypes, string>()
+        static public Dictionary<VehicleActionTypes, string> VehicleActionTypesDict = new Dictionary<VehicleActionTypes, string>()
         {
             { VehicleActionTypes.StartEngine,  "Запустить двигатель"},
             { VehicleActionTypes.SpeedUp,  "Увеличить скорость"},
@@ -326,21 +504,36 @@ namespace OOP
             { VehicleActionTypes.ReturnToGarage,  "Вернуться в гараж"}
         };
 
-        internal enum GroundVehicleEngineTypes
+        public enum GroundVehicleEngineTypes
         {
             Gasoline,
             Diesel,
             Electric
         };
 
-        static internal Dictionary<GroundVehicleEngineTypes, string> GroundVehicleEngineTypesDict = new Dictionary<GroundVehicleEngineTypes, string>()
+        static public Dictionary<GroundVehicleEngineTypes, string> GroundVehicleEngineTypesDict = new Dictionary<GroundVehicleEngineTypes, string>()
         {
             { GroundVehicleEngineTypes.Gasoline,  "Бензиновый"},
             { GroundVehicleEngineTypes.Diesel,  "Дизельный"},
             { GroundVehicleEngineTypes.Electric,  "Электрический"}
         };
 
-        internal enum CarBodyTypes
+        public enum AirVehicleEngineTypes
+        {
+            Reactive,
+            Radial,
+            Turboshaft
+        }
+
+        static public Dictionary<AirVehicleEngineTypes, string> AirVehicleEngineTypesDict = new Dictionary<AirVehicleEngineTypes, string>()
+        {
+            { AirVehicleEngineTypes.Reactive,  "Реактивный"},
+            { AirVehicleEngineTypes.Radial,  "Звёздообразный"},
+            { AirVehicleEngineTypes.Turboshaft,  "Газотурбинный "}
+        };
+
+
+        public enum CarBodyTypes
         {
             Sedan,
             SUV,
@@ -348,13 +541,13 @@ namespace OOP
         };
 
 
-        static internal Dictionary<CarBodyTypes, string> CarBodyTypesDict = new Dictionary<CarBodyTypes, string>()
+        static public Dictionary<CarBodyTypes, string> CarBodyTypesDict = new Dictionary<CarBodyTypes, string>()
         {
             { CarBodyTypes.Sedan,  "Седан"},
             { CarBodyTypes.SUV,  "Внедорожник/Кроссовер"},
             { CarBodyTypes.Supercar,  "Суперкар"}
         };
-
-
     }
 }
+
+
