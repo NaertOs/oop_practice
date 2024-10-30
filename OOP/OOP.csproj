@@ -45,7 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\AirVehicles.cs" />
-    <Compile Include="Classes\EnumsAndDicts.cs" />
+    <Compile Include="Classes\Controller.cs" />
+    <Compile Include="Classes\Garage.cs" />
     <Compile Include="Classes\GroundVehicles.cs" />
     <Compile Include="Classes\Interfaces.cs" />
     <Compile Include="Classes\Vehicle.cs" />
