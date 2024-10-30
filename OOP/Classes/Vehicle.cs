@@ -53,5 +53,90 @@ namespace OOP.Classes
         abstract public void StartEngine();
 
         abstract public void ShutdownEngine();
+
+        internal enum WheelDriveTypes
+        {
+            FrontWheelDrive,
+            RearWhellDrive,
+            FourWheelDrive
+        }
+
+
+        internal static Dictionary<WheelDriveTypes, string> WheelDriveTypesDict = new Dictionary<WheelDriveTypes, string>()
+        {
+            { WheelDriveTypes.FrontWheelDrive,  "Передний"},
+            { WheelDriveTypes.RearWhellDrive,  "Задний"},
+            { WheelDriveTypes.FourWheelDrive,  "Полный"}
+        };
+
+        public enum VehicleActionTypes
+        {
+            StartEngine,
+            SpeedUp,
+            SlowDown,
+            EmergencyBreaking,
+            PedalToTheMetal,
+            IncreaseAltitude,
+            DecreaseAltitude,
+            ShutdownfEngine,
+            ReturnToGarage
+        }
+
+        static public Dictionary<VehicleActionTypes, string> VehicleActionTypesDict = new Dictionary<VehicleActionTypes, string>()
+        {
+            { VehicleActionTypes.StartEngine,  "Запустить двигатель"},
+            { VehicleActionTypes.SpeedUp,  "Увеличить скорость"},
+            { VehicleActionTypes.SlowDown,  "Снизить скорость"},
+            { VehicleActionTypes.EmergencyBreaking,  "Резко затормозить!"},
+            { VehicleActionTypes.PedalToTheMetal,  "Педаль в пол!"},
+            { VehicleActionTypes.IncreaseAltitude,  "Увеличить высоту"},
+            { VehicleActionTypes.DecreaseAltitude,  "Снизить высоту"},
+            { VehicleActionTypes.ShutdownfEngine,  "Заглушить двигатель"},
+            { VehicleActionTypes.ReturnToGarage,  "Вернуться в гараж"}
+        };
+
+        public enum GroundVehicleEngineTypes
+        {
+            Gasoline,
+            Diesel,
+            Electric
+        };
+
+        static public Dictionary<GroundVehicleEngineTypes, string> GroundVehicleEngineTypesDict = new Dictionary<GroundVehicleEngineTypes, string>()
+        {
+            { GroundVehicleEngineTypes.Gasoline,  "Бензиновый"},
+            { GroundVehicleEngineTypes.Diesel,  "Дизельный"},
+            { GroundVehicleEngineTypes.Electric,  "Электрический"}
+        };
+
+        public enum AirVehicleEngineTypes
+        {
+            Reactive,
+            Radial,
+            Turboshaft
+        }
+
+        static public Dictionary<AirVehicleEngineTypes, string> AirVehicleEngineTypesDict = new Dictionary<AirVehicleEngineTypes, string>()
+        {
+            { AirVehicleEngineTypes.Reactive,  "Реактивный"},
+            { AirVehicleEngineTypes.Radial,  "Звёздообразный"},
+            { AirVehicleEngineTypes.Turboshaft,  "Газотурбинный "}
+        };
+
+
+        public enum CarBodyTypes
+        {
+            Sedan,
+            SUV,
+            Supercar
+        };
+
+
+        static public Dictionary<CarBodyTypes, string> CarBodyTypesDict = new Dictionary<CarBodyTypes, string>()
+        {
+            { CarBodyTypes.Sedan,  "Седан"},
+            { CarBodyTypes.SUV,  "Внедорожник/Кроссовер"},
+            { CarBodyTypes.Supercar,  "Суперкар"}
+        };
     }
 }

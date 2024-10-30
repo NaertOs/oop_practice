@@ -44,7 +44,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\GroundVehicle.cs" />
+    <Compile Include="Classes\AirVehicles.cs" />
+    <Compile Include="Classes\EnumsAndDicts.cs" />
+    <Compile Include="Classes\GroundVehicles.cs" />
+    <Compile Include="Classes\Interfaces.cs" />
     <Compile Include="Classes\Vehicle.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
