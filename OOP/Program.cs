@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using OOP.Classes;
 
 namespace OOP
 {
@@ -15,77 +16,28 @@ namespace OOP
         {
             Car car = new Car(name: "Жигули", weight: 1500, maxSpeed: 100, acceleration: 5, wheelDriveType: WheelDriveTypes.RearWhellDrive,
                 engineType: GroundVehicleEngineTypes.Gasoline, horsePower: 70, bodyType: CarBodyTypes.Sedan);
+            car.DisplayVehicleInfo();
 
-            Motorcycle moto = new Motorcycle(name: "Harley-Davidson", weight: 1500, maxSpeed: 290, acceleration: 30,
+            Motorcycle moto = new Motorcycle(name: "Harley-Davidson", weight: 100, maxSpeed: 290, acceleration: 30,
                 engineType: GroundVehicleEngineTypes.Gasoline, horsePower: 70);
+            moto.DisplayVehicleInfo();
 
             Helicopter heli = new Helicopter(name: "Ми-24", weight: 5000, maxSpeed: 400, acceleration: 40, maxAltitude: 4000,
                 verticalAcceleration: 60, loadCapacity: 10000, AirVehicleEngineTypes.Turboshaft);
-
+            heli.DisplayVehicleInfo();
 
             Plane plane = new Plane(name: "Sea Wixen", weight: 3000, maxSpeed: 1151, acceleration: 100, maxAltitude: 9000,
                 verticalAcceleration: 180, loadCapacity: 3000, AirVehicleEngineTypes.Reactive, runwayLength: 300);
+            plane.DisplayVehicleInfo();
 
             Plane plane2 = new Plane(name: "F4U Corsair", weight: 2000, maxSpeed: 485, acceleration: 40, maxAltitude: 3500,
                 verticalAcceleration: 20, loadCapacity: 1500, AirVehicleEngineTypes.Radial, runwayLength: 350);
+            plane2.DisplayVehicleInfo();
 
             Console.ReadLine();
         }
 
 
-
-
-
-        public abstract class Vehicle
-        {
-            protected string _name;
-
-            protected float _weight;
-
-            protected int _maxSpeed;
-            protected const int _MINSPEED = 0;
-            protected short _acceleration;
-            protected double _currSpeed;
-
-            protected bool _isEngineRunning;
-
-            public Vehicle(string name, float weight, int maxSpeed, short acceleration)
-            {
-                _name = name;
-                _weight = weight;
-                _maxSpeed = maxSpeed;
-                _acceleration = acceleration;
-                _currSpeed = _MINSPEED;
-                _isEngineRunning = false;
-            }
-
-            public int VehicleMaxSpeed
-            {
-                get { return _maxSpeed; }
-            }
-
-            public int VehicleMinSpeed
-            {
-                get { return _MINSPEED; }
-            }
-
-            public string VehicleName
-            {
-                get { return _name; }
-                set { _name = value; }
-            }
-
-            public float VehicleWeight
-            {
-                get { return _weight; }
-            }
-
-            abstract public void StartEngine();
-
-
-            abstract public void ShutdownEngine();
-
-        }
 
         public abstract class AirVehicle : Vehicle, IMovableHorizontal, IMovableVertical
         {
@@ -96,7 +48,7 @@ namespace OOP
             protected int _loadCapacity;
             protected AirVehicleEngineTypes _engineType;
 
-                public AirVehicle(string name, float weight, short maxSpeed,
+            public AirVehicle(string name, float weight, short maxSpeed,
                 short acceleration, int maxAltitude, short verticalAcceleration, int loadCapacity, AirVehicleEngineTypes engineType) :
                 base(name, weight, maxSpeed, acceleration)
             {
@@ -252,6 +204,7 @@ namespace OOP
                 Console.WriteLine($"Название: {_name}, тип: Вертолёт");
                 Console.WriteLine($"Грузопдъемность: {_loadCapacity}, вес: {_weight} кг");
                 Console.WriteLine($"Максимальная высота: {_maxAltitude}, Тип двигателя: {AirVehicleEngineTypesDict[_engineType]}");
+                Console.WriteLine("\n");
             }
         }
 
@@ -273,7 +226,8 @@ namespace OOP
                 Console.WriteLine($"Название: {_name}, тип: Самолёт");
                 Console.WriteLine($"Грузопдъемность: {_loadCapacity}, вес: {_weight} кг");
                 Console.WriteLine($"Максимальная высота: {_maxAltitude}, Тип двигателя: {AirVehicleEngineTypesDict[_engineType]}, " +
-                    $"Длина взлётной полосы:{_runwayLength}");
+                    $"Длина взлётной полосы: {_runwayLength}");
+                Console.WriteLine("\n");
             }
         }
 
@@ -421,6 +375,7 @@ namespace OOP
                 Console.WriteLine($"Кузов: {_bodyType}, вес: {_weight} кг");
                 Console.WriteLine($"Привод: {WheelDriveTypesDict[_wheelDriveType]}, количество колёс: {_WHEELSCOUNT} ");
                 Console.WriteLine($"Тип двигателя: {GroundVehicleEngineTypesDict[_engineType]}, мощность: {_horsePower} л/с");
+                Console.WriteLine("\n");
             }
         }
 
@@ -443,6 +398,7 @@ namespace OOP
                 Console.WriteLine($"Вес: {_weight} кг");
                 Console.WriteLine($"Привод: {WheelDriveTypesDict[_wheelDriveType]}, количество колёс: {_WHEELSCOUNT} ");
                 Console.WriteLine($"Тип двигателя: {GroundVehicleEngineTypesDict[_engineType]}, мощность: {_horsePower} л/с");
+                Console.WriteLine("\n");
             }
         }
 
