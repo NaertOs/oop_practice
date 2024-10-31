@@ -6,15 +6,18 @@ using System.Threading.Tasks;
 
 namespace OOP.Classes
 {
-    internal class Garage
+    internal class Hangar
     {
-        public List<GroundVehicle> _vehicles;
+        private List<AirVehicle> _vehicles;
+        private short _runawatLength;
+        
 
 
 
-        public Garage()
+        public Hangar()
         {
-            _vehicles = new List<GroundVehicle>();
+            _vehicles = new List<AirVehicle>();
+            _runawatLength = 600;
         }
 
         public void PrintListOfVehicles()
@@ -30,7 +33,7 @@ namespace OOP.Classes
             }
         }
 
-        public List<GroundVehicle> Vehicles
+        public List<AirVehicle> Vehicles
         {
             get { return _vehicles; }
         }
@@ -40,9 +43,9 @@ namespace OOP.Classes
             return _vehicles[vehicleNumber - 1];
         }
 
-        public void PrintGarageInfo()
+        public void PrintHangarInfo()
         {
-            Console.WriteLine($"Добро пожаловать в Ваш гараж! Сейчас здесь {_vehicles.Count} единиц техники.");
+            Console.WriteLine($"Добро пожаловать в Ваш ангар! Сейчас здесь {_vehicles.Count} единиц техники. \nДлина взлётной полосы: {_runawatLength} м.");
             PrintListOfVehicles();
         }
 
@@ -51,14 +54,14 @@ namespace OOP.Classes
             return _vehicles.Count;
         }
 
-        public void AddVehicle(GroundVehicle vehicle)
+        public void AddVehicle(AirVehicle vehicle)
         {
             _vehicles.Add(vehicle);
         }
 
         public void RemoveVehicleByID(int vehicleNumber)
         {
-            _vehicles.Remove(_vehicles[vehicleNumber-1]);
+            _vehicles.Remove(_vehicles[vehicleNumber - 1]);
         }
     }
 }
